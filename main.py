@@ -202,3 +202,66 @@ print(f"Teacher accuracy: {test_accuracy_deep:.2f}%")
 print(f"Student accuracy without teacher: {test_accuracy_light_ce:.2f}%")
 print(f"Student accuracy with CE + KD: {test_accuracy_light_ce_and_kd:.2f}%")
 
+class ModifiedDeepNNCosine(nn.Module):
+    def __init__(self, num_classes=10):
+        super(ModifiedDeepNNCosine, self).__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 128, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(64, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(64, 32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
+        self.classifier = nn.Sequential(
+            nn.Linear(2048, 512),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(512, num_classes)
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        flattened_conv_output = torch.flatten(x, 1)
+        x = self.classifier(flattened_conv_output)
+        flattened_conv_output_after_pooling = torch.nn.functional.avg_pool1d(flattened_conv_output, 2)
+        return x, flattened_conv_output_after_pooling
+
+# Create a similar student class where we return a tuple. We do not apply pooling after flattening.
+class ModifiedLightNNCosine(nn.Module):
+    def __init__(self, num_classes=10):
+        super(ModifiedLightNNCosine, self).__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 16, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(16, 16, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
+        self.classifier = nn.Sequential(
+            nn.Linear(1024, 256),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(256, num_classes)
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        flattened_conv_output = torch.flatten(x, 1)
+        x = self.classifier(flattened_conv_output)
+        return x, flattened_conv_output
+
+# We do not have to train the modified deep network from scratch of course, we just load its weights from the trained instance
+modified_nn_deep = ModifiedDeepNNCosine(num_classes=10).to(device)
+modified_nn_deep.load_state_dict(nn_deep.state_dict())
+
+# Once again ensure the norm of the first layer is the same for both networks
+print("Norm of 1st layer for deep_nn:", torch.norm(nn_deep.features[0].weight).item())
+print("Norm of 1st layer for modified_deep_nn:", torch.norm(modified_nn_deep.features[0].weight).item())
+
+
