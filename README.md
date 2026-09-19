@@ -6,9 +6,9 @@ A custom Knowledge Distillation engine focused on **Chain-of-Thought (reasoning)
 
 Standard distillation (soft targets, feature matching) teaches a student to imitate a teacher's *output*. CoT distillation goes further: it teaches the student to reproduce the *process* by which the teacher arrives at an answer (step-by-step reasoning), which yields much better results on reasoning-heavy tasks with a far smaller model and less training data.
 
-This direction is directly relevant to:
-- **Perplexity** - smaller, faster models that still reason well directly cut latency/cost in a search + LLM pipeline
-- **JetBrains** - local/on-device AI Assistant tooling needs models that run fast without a GPU farm while retaining reasoning quality (e.g. for code debugging)
+This direction is directly relevant as it gives:
+- smaller, faster models that still reason well directly cut latency/cost in a search + LLM pipeline
+- local/on-device AI Assistant tooling needs models that run fast without a GPU farm while retaining reasoning quality (e.g. for code debugging)
 
 ## Architecture
 
