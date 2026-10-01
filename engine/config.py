@@ -3,7 +3,7 @@
 All experiment knobs live here so that experiments/*.py scripts only need to
 override a few fields.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -25,7 +25,10 @@ class StudentConfig:
     lora_r: int = 16
     lora_alpha: int = 32
     lora_dropout: float = 0.05
-    lora_target_modules: tuple[str, ...] = ("q_proj", "k_proj", "v_proj", "o_proj")
+    lora_target_modules: tuple[str, ...] = (
+        "q_proj", "k_proj", "v_proj", "o_proj",  # attention
+        "gate_proj", "up_proj", "down_proj",  # FFN
+    )
 
 @dataclass
 class TrainingConfig:
