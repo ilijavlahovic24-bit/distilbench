@@ -41,4 +41,6 @@ distillbench/
 
 ## Resources
 
-Hsieh et al. 2023 (Distilling Step-by-Step), Magister et al. 2023, Wei et al. 2022 (CoT Prompting), Chen et al. 2023 (Self-Debug) 
+- Hsieh et al. 2023 (Distilling Step-by-Step)
+- Magister et al. 2023, Wei et al. 2022 (CoT Prompting)
+- Chen et al. 2023 (Self-Debug) 
