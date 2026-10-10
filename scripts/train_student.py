@@ -47,6 +47,8 @@ def main() -> int:
     p.add_argument("--train-file", required=True, type=Path)
     p.add_argument("--eval-file", type=Path, default=None)
     p.add_argument("--run-name", required=True)
+    p.add_argument("--student-model", type=str, default=None,
+                   help="Override student model (e.g. Qwen/Qwen2.5-1.5B-Instruct).")
     p.add_argument("--output-root", type=Path, default=Path("results/checkpoints"))
     p.add_argument("--alpha", type=float, default=0.5)
     p.add_argument("--epochs", type=int, default=None)
@@ -61,6 +63,8 @@ def main() -> int:
         return 1
 
     cfg = DistillBenchConfig()
+    if args.student_model is not None:
+        cfg.student.model_name = args.student_model
     if args.epochs is not None:
         cfg.training.num_train_epochs = args.epochs
     if args.lr is not None:

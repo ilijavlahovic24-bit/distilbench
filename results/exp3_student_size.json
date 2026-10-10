@@ -1,0 +1,6 @@
+{
+  "0.5b": {
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "error": "train_student failed (rc=1) for run=exp3_student_0.5b"
+  }
+}
